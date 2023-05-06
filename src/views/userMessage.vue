@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-button size="small" @click="dialogVisible = true" type="primary" plain><i class="el-icon-circle-plus-outline">添加用户</i></el-button>
+    <el-button size="small" @click="dialogVisible = true" type="primary" plain>添加用户<i class="el-icon-circle-plus-outline"></i></el-button>
+    <el-button size="small" @click="dialogVisible = true" type="danger" plain>批量删除<i class="el-icon-circle-close"></i></el-button>
     <el-table
         ref="multipleTable"
         :data="tableData"
@@ -46,6 +47,11 @@
           label="状态"
           show-overflow-tooltip>
       </el-table-column>
+        <el-table-column>
+          <teleport slot-scope="scope">
+          <el-button size="small" @click="updateUser(scope.row)" type="warning" plain>修改用户<i class="el-icon-star-off"></i></el-button>
+          </teleport>
+        </el-table-column>
     </el-table>
       <el-pagination
           @size-change="handleSizeChange"
@@ -57,6 +63,7 @@
           :total="400">
       </el-pagination>
 
+<!--    添加用户的弹窗页面-->
     <el-dialog
         title="添加用户"
         :visible.sync="dialogVisible"
@@ -84,6 +91,34 @@
     <el-button type="primary" @click="insertUser">确 定</el-button>
   </span>
     </el-dialog>
+<!--    编辑用户页面的弹窗-->
+    <el-dialog
+        title="编辑用户信息"
+        :visible.sync="centerDialogVisible"
+        width="30%"
+        center>
+      <el-form :label-position="labelPosition" label-width="80px" :model="form">
+        <el-form-item label="用户名">
+          <el-input v-model="form.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="昵称">
+          <el-input v-model="form.nickName"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <el-input v-model="form.phonenumber"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="form.email"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="centerDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="updateUserPut">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -95,6 +130,7 @@ export default {
   data() {
     return {
       labelPosition: 'right',
+      centerDialogVisible: false,
       dialogVisible: false,
       currentPage1: 5,
       currentPage2: 5,
@@ -102,6 +138,7 @@ export default {
       currentPage4: 4,
       tableData: [{}],
       form:{
+        userId:'',
         userName: '',
         nickName: '',
         email: '',
@@ -145,11 +182,22 @@ export default {
       this.$confirm('确认关闭？');
     },
     insertUser(){
-      console.log(this.form)
       axios.post("http://localhost:80/users",this.form).then((res)=>{
         if(res.data.code==202){
           this.getList();
           this.dialogVisible=false;
+        }
+      })
+    },
+    updateUser(row){
+      this.form= row;
+      this.centerDialogVisible=true;
+    },
+    updateUserPut(){
+      axios.put("http://localhost:80/users",this.form).then((res)=>{
+        if(res.data.code==203){
+          this.centerDialogVisible=false;
+          this.getList();
         }
       })
     }
