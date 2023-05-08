@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button size="small" @click="dialogVisible = true" type="primary" plain>添加用户<i class="el-icon-circle-plus-outline"></i></el-button>
-    <el-button size="small" @click="dialogVisible = true" type="danger" plain>批量删除<i class="el-icon-circle-close"></i></el-button>
+    <el-button size="small" @click="deleteIds" type="danger" plain>批量删除<i class="el-icon-circle-close"></i></el-button>
     <el-table
         ref="multipleTable"
         :data="tableData"
@@ -15,32 +15,32 @@
       <el-table-column
           prop="userId"
           label="编号"
-          width="120">
+          width="150">
       </el-table-column>
       <el-table-column
           prop="userName"
           label="账户名"
-          width="120">
+          width="150">
       </el-table-column>
       <el-table-column
           prop="nickName"
           label="昵称"
-          width="120">
+          width="150">
       </el-table-column>
       <el-table-column
           prop="phonenumber"
           label="手机号"
-          width="120">
+          width="150">
       </el-table-column>
       <el-table-column
           prop="email"
           label="邮箱"
-          width="120">
+          width="150">
       </el-table-column>
       <el-table-column
           prop="sex"
           label="性别"
-          width="120">
+          width="150">
       </el-table-column>
       <el-table-column
           prop="status"
@@ -203,6 +203,14 @@ export default {
       axios.put("http://localhost:80/users",this.form).then((res)=>{
         if(res.data.code==203){
           this.centerDialogVisible=false;
+          this.getList();
+        }
+      })
+    },
+    deleteIds(){
+      let ids = this.multipleSelection.map(v => v.id)
+      axios.post("http://localhost:80/users/deleteIds",ids).then((res)=>{
+        if(res.data.code==204){
           this.getList();
         }
       })

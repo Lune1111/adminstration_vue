@@ -5,7 +5,7 @@
         <el-submenu index="1">
           <template slot="title"><i class="el-icon-message"></i>导航一</template>
           <el-menu-item-group>
-            <el-menu-item index="/user">用户信息</el-menu-item>
+            <el-menu-item index="/user"><i class="el-icon-user"></i>用户信息</el-menu-item>
             <el-menu-item index="1-2">选项2</el-menu-item>
           </el-menu-item-group>
           <el-menu-item-group title="分组2">
