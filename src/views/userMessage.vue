@@ -56,11 +56,11 @@
       <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :current-page="pageNumber"
+          :page-sizes="[2,5,10,20]"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
+          :total="total">
       </el-pagination>
 
 <!--    添加用户的弹窗页面-->
@@ -129,6 +129,9 @@ export default {
   name: "userMessage",
   data() {
     return {
+      total:1,
+      pageNumber:1,
+      pageSize:2,
       labelPosition: 'right',
       centerDialogVisible: false,
       dialogVisible: false,
@@ -154,9 +157,10 @@ export default {
   },
   methods: {
     getList(){
-      axios.get("http://localhost:80/users").then((res)=>{
+      axios.get("http://localhost:80/users?pageNumber="+this.pageNumber+"&pageSize="+this.pageSize).then((res)=>{
         if(res.data.code==201){
           this.tableData=res.data.data;
+          this.total=res.data.total;
         }
       })
     },
@@ -173,10 +177,12 @@ export default {
       this.multipleSelection = val;
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.pageSize=val;
+      this.getList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.pageNumber=val;
+      this.getList();
     },
     handleClose() {
       this.$confirm('确认关闭？');
