@@ -3,7 +3,6 @@
     <el-button size="small" @click="dialogVisible = true" type="primary" plain>添加用户<i class="el-icon-circle-plus-outline"></i></el-button>
     <el-button size="small" @click="deleteIds" type="danger" plain>批量删除<i class="el-icon-circle-close"></i></el-button>
     <el-table
-        ref="multipleTable"
         :data="tableData"
         tooltip-effect="light"
         style="width: 100%"
@@ -37,10 +36,10 @@
           label="邮箱"
           width="150">
       </el-table-column>
-      <el-table-column
-          prop="sex"
-          label="性别"
-          width="150">
+      <el-table-column prop="sex">
+        <template slot-scope="scope">
+          <span>{{scope.row.sex=='1'?'男':'女'}}</span>
+        </template>
       </el-table-column>
       <el-table-column
           prop="status"
@@ -75,6 +74,10 @@
         </el-form-item>
         <el-form-item label="昵称">
           <el-input v-model="form.nickName"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-radio v-model="form.sex" label="1">男</el-radio>
+          <el-radio v-model="form.sex" label="0">女</el-radio>
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="form.password"></el-input>
@@ -129,23 +132,22 @@ export default {
   name: "userMessage",
   data() {
     return {
+      radio: '1',
       total:1,
       pageNumber:1,
       pageSize:2,
       labelPosition: 'right',
       centerDialogVisible: false,
       dialogVisible: false,
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4,
-      tableData: [{}],
+      tableData: {
+        sex:''
+      },
       form:{
         userId:'',
         userName: '',
         nickName: '',
         email: '',
-        sex: '',
+        sex: '1',
         password: '',
         phonenumber: ''
       },
@@ -159,19 +161,10 @@ export default {
     getList(){
       axios.get("http://localhost:80/users?pageNumber="+this.pageNumber+"&pageSize="+this.pageSize).then((res)=>{
         if(res.data.code==201){
-          this.tableData=res.data.data;
+          this.tableData=res.data.rows;
           this.total=res.data.total;
         }
       })
-    },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -208,7 +201,7 @@ export default {
       })
     },
     deleteIds(){
-      let ids = this.multipleSelection.map(v => v.id)
+      let ids = this.multipleSelection.map(v => v.userId)
       axios.post("http://localhost:80/users/deleteIds",ids).then((res)=>{
         if(res.data.code==204){
           this.getList();
