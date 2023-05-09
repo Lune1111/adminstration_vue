@@ -2,6 +2,8 @@
   <div>
     <el-button size="small" @click="dialogVisible = true" type="primary" plain>添加用户<i class="el-icon-circle-plus-outline"></i></el-button>
     <el-button size="small" @click="deleteIds" type="danger" plain>批量删除<i class="el-icon-circle-close"></i></el-button>
+    <el-button size="small" @click="deleteIds" type="primary" plain>导入<i class="el-icon-upload2"></i></el-button>
+    <el-button size="small" @click="deleteIds" type="primary" plain>导出<i class="el-icon-download"></i></el-button>
     <el-table
         :data="tableData"
         tooltip-effect="light"
@@ -36,7 +38,7 @@
           label="邮箱"
           width="150">
       </el-table-column>
-      <el-table-column prop="sex">
+      <el-table-column prop="sex" label="性别">
         <template slot-scope="scope">
           <span>{{scope.row.sex=='1'?'男':'女'}}</span>
         </template>
@@ -163,8 +165,22 @@ export default {
         if(res.data.code==201){
           this.tableData=res.data.rows;
           this.total=res.data.total;
+        }else{
+          this.openWarning(res.data.message);
         }
       })
+    },
+    open(msg) {
+      this.$message({
+        message:msg,
+        type:"success"
+      })
+    },
+    openWarning(msg) {
+      this.$message({
+        message: msg,
+        type: "error"
+      });
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -177,14 +193,23 @@ export default {
       this.pageNumber=val;
       this.getList();
     },
-    handleClose() {
-      this.$confirm('确认关闭？');
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+          // eslint-disable-next-line no-unused-vars
+          .then(_ => {
+            done();
+          })
+          // eslint-disable-next-line no-unused-vars
+          .catch(_ => {});
     },
     insertUser(){
       axios.post("http://localhost:80/users",this.form).then((res)=>{
         if(res.data.code==202){
+          this.open(res.data.message);
           this.getList();
           this.dialogVisible=false;
+        }else{
+          this.openWarning(res.data.message);
         }
       })
     },
@@ -196,16 +221,24 @@ export default {
       axios.put("http://localhost:80/users",this.form).then((res)=>{
         if(res.data.code==203){
           this.centerDialogVisible=false;
+          this.open(res.data.message);
           this.getList();
+        }else{
+          this.openWarning(res.data.message);
         }
       })
     },
     deleteIds(){
       let ids = this.multipleSelection.map(v => v.userId)
-      axios.post("http://localhost:80/users/deleteIds",ids).then((res)=>{
-        if(res.data.code==204){
-          this.getList();
-        }
+      this.$confirm("确定删除数据么?","提示",{type:'warning'}).then(()=>{
+        axios.post("http://localhost:80/users/deleteIds",ids).then((res)=>{
+          if(res.data.code==204){
+            this.getList();
+            this.open(res.data.message);
+          }else{
+            this.openWarning(res.data.message);
+          }
+        })
       })
     }
   }
