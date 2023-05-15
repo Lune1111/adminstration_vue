@@ -1,9 +1,22 @@
 <template>
   <div>
-    <el-button size="small" @click="dialogVisible = true" type="primary" plain>添加用户<i class="el-icon-circle-plus-outline"></i></el-button>
-    <el-button size="small" @click="deleteIds" type="danger" plain>批量删除<i class="el-icon-circle-close"></i></el-button>
-    <el-button size="small" @click="deleteIds" type="primary" plain>导入<i class="el-icon-upload2"></i></el-button>
-    <el-button size="small" @click="deleteIds" type="primary" plain>导出<i class="el-icon-download"></i></el-button>
+    <el-button size="small" @click="dialogVisible = true" type="primary" plain>添加用户<i
+        class="el-icon-circle-plus-outline"></i></el-button>
+    <el-button size="small" @click="deleteIds" type="danger" plain>批量删除<i class="el-icon-circle-close"></i>
+    </el-button>
+    <el-upload
+        :show-file-list="false"
+        accept="xlsx"
+        class="inline-block"
+        action="http://localhost:80/users/importUser"
+        :disabled="enableFlag==false?true:false"
+        multiple
+        :limit="3"
+        :on-success="handleSuccess"
+        :on-exceed="handleExceed">
+      <el-button size="small" type="primary" class="margin-change" plain>导入<i class="el-icon-upload2"></i></el-button>
+    </el-upload>
+    <el-button size="small" @click="expot" type="primary" plain>导出<i class="el-icon-download"></i></el-button>
     <el-table
         :data="tableData"
         tooltip-effect="light"
@@ -40,31 +53,39 @@
       </el-table-column>
       <el-table-column prop="sex" label="性别">
         <template slot-scope="scope">
-          <span>{{scope.row.sex=='1'?'男':'女'}}</span>
+          <span>{{ scope.row.sex == '1' ? '男' : '女' }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-          prop="status"
-          label="状态"
-          show-overflow-tooltip>
+      <el-table-column prop="status" label="状态">
+        <template slot-scope="scope">
+          <el-switch
+              v-model="scope.row.status"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-value="1"
+              inactive-value="0"
+              @change="changeStatus(scope.row)">
+          </el-switch>
+        </template>
       </el-table-column>
-        <el-table-column>
-          <teleport slot-scope="scope">
-          <el-button size="small" @click="updateUser(scope.row)" type="warning" plain>修改用户<i class="el-icon-star-off"></i></el-button>
-          </teleport>
-        </el-table-column>
+      <el-table-column>
+        <teleport slot-scope="scope" name="app">
+          <el-button size="small" @click="updateUser(scope.row)" type="warning" plain>修改用户<i
+              class="el-icon-star-off"></i></el-button>
+        </teleport>
+      </el-table-column>
     </el-table>
-      <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pageNumber"
-          :page-sizes="[2,5,10,20]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
-      </el-pagination>
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pageNumber"
+        :page-sizes="[2,5,10,20]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+    </el-pagination>
 
-<!--    添加用户的弹窗页面-->
+    <!--    添加用户的弹窗页面-->
     <el-dialog
         title="添加用户"
         :visible.sync="dialogVisible"
@@ -96,7 +117,7 @@
     <el-button type="primary" @click="insertUser">确 定</el-button>
   </span>
     </el-dialog>
-<!--    编辑用户页面的弹窗-->
+    <!--    编辑用户页面的弹窗-->
     <el-dialog
         title="编辑用户信息"
         :visible.sync="centerDialogVisible"
@@ -134,18 +155,20 @@ export default {
   name: "userMessage",
   data() {
     return {
+      value: 1,
+      fileList: [{}],
       radio: '1',
-      total:1,
-      pageNumber:1,
-      pageSize:2,
+      total: 1,
+      pageNumber: 1,
+      pageSize: 2,
       labelPosition: 'right',
       centerDialogVisible: false,
       dialogVisible: false,
       tableData: {
-        sex:''
+        sex: ''
       },
-      form:{
-        userId:'',
+      form: {
+        userId: '',
         userName: '',
         nickName: '',
         email: '',
@@ -160,20 +183,20 @@ export default {
     this.getList();
   },
   methods: {
-    getList(){
-      axios.get("http://localhost:80/users?pageNumber="+this.pageNumber+"&pageSize="+this.pageSize).then((res)=>{
-        if(res.data.code==201){
-          this.tableData=res.data.rows;
-          this.total=res.data.total;
-        }else{
+    getList() {
+      axios.get("http://localhost:80/users?pageNumber=" + this.pageNumber + "&pageSize=" + this.pageSize).then((res) => {
+        if (res.data.code == 201) {
+          this.tableData = res.data.rows;
+          this.total = res.data.total;
+        } else {
           this.openWarning(res.data.message);
         }
       })
     },
     open(msg) {
       this.$message({
-        message:msg,
-        type:"success"
+        message: msg,
+        type: "success"
       })
     },
     openWarning(msg) {
@@ -186,11 +209,11 @@ export default {
       this.multipleSelection = val;
     },
     handleSizeChange(val) {
-      this.pageSize=val;
+      this.pageSize = val;
       this.getList();
     },
     handleCurrentChange(val) {
-      this.pageNumber=val;
+      this.pageNumber = val;
       this.getList();
     },
     handleClose(done) {
@@ -200,51 +223,92 @@ export default {
             done();
           })
           // eslint-disable-next-line no-unused-vars
-          .catch(_ => {});
+          .catch(_ => {
+          });
     },
-    insertUser(){
-      axios.post("http://localhost:80/users",this.form).then((res)=>{
-        if(res.data.code==202){
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
+    insertUser() {
+      axios.post("http://localhost:80/users", this.form).then((res) => {
+        if (res.data.code == 202) {
           this.open(res.data.message);
           this.getList();
-          this.dialogVisible=false;
-        }else{
+          this.dialogVisible = false;
+        } else {
           this.openWarning(res.data.message);
         }
       })
     },
-    updateUser(row){
-      this.form= row;
-      this.centerDialogVisible=true;
+    updateUser(row) {
+      this.form = row;
+      this.centerDialogVisible = true;
     },
-    updateUserPut(){
-      axios.put("http://localhost:80/users",this.form).then((res)=>{
-        if(res.data.code==203){
-          this.centerDialogVisible=false;
+    updateUserPut() {
+      axios.put("http://localhost:80/users", this.form).then((res) => {
+        if (res.data.code == 203) {
+          this.centerDialogVisible = false;
           this.open(res.data.message);
           this.getList();
-        }else{
+        } else {
           this.openWarning(res.data.message);
         }
       })
     },
-    deleteIds(){
+    statusupdate(row) {
+      axios.put("http://localhost:80/users", row).then((res) => {
+        if (res.data.code == 203) {
+          this.centerDialogVisible = false;
+          this.open(res.data.message);
+          this.getList();
+        } else {
+          this.openWarning(res.data.message);
+        }
+      })
+    },
+    deleteIds() {
       let ids = this.multipleSelection.map(v => v.userId)
-      this.$confirm("确定删除数据么?","提示",{type:'warning'}).then(()=>{
-        axios.post("http://localhost:80/users/deleteIds",ids).then((res)=>{
-          if(res.data.code==204){
+      this.$confirm("确定删除数据么?", "提示", {type: 'warning'}).then(() => {
+        axios.post("http://localhost:80/users/deleteIds", ids).then((res) => {
+          if (res.data.code == 204) {
             this.getList();
             this.open(res.data.message);
-          }else{
+          } else {
             this.openWarning(res.data.message);
           }
         })
       })
+    },
+    changeStatus(row) {
+      let text = row.status === "1" ? "启用" : "停用";
+      this.$confirm('确认要"' + text + '""' + row.nickName + '"用户吗？').then(function () {
+      }).then(() => {
+        this.statusupdate(row);
+        this.getList();
+        this.$modal.msgSuccess(text + "成功");
+      }).catch(function () {
+        row.status = row.status === "0" ? "1" : "0";
+      });
+    },
+    expot(){
+      window.open("http://localhost/users/outUser");
+    },
+    handleSuccess(){
+      this.getList();
+      this.open("文件上传成功！");
     }
   }
 }
 </script>
 
 <style scoped>
+.inline-block {
+  display: inline-block;
+  margin-right: 10px;
+}
 
+.margin-change {
+  display: inline-block;
+  margin-left: 10px;
+}
 </style>
