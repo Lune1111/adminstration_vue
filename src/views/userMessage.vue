@@ -155,6 +155,7 @@ export default {
   name: "userMessage",
   data() {
     return {
+      enableFlag:'',
       value: 1,
       fileList: [{}],
       radio: '1',

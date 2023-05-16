@@ -1,21 +1,15 @@
 <template>
   <el-container style="height: 777px; border: 1px solid #eee">
-    <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-      <el-menu :default-openeds="['1', '3']" router>
-        <el-submenu index="1">
-          <template slot="title"><i class="el-icon-message"></i>导航一</template>
+    <el-aside width="200px">
+      <el-menu router class="grad" text-color="black">
+          <el-menu-item index="999" :route="{ path: '/home' }" style="text-align:left !important">
+            <i class="el-icon-location"></i>
+            <span class="el-menu-item-name" style="margin-left: 0">主页</span>
+          </el-menu-item>
           <el-menu-item-group>
             <el-menu-item index="/user"><i class="el-icon-user"></i>用户信息</el-menu-item>
-            <el-menu-item index="1-2">选项2</el-menu-item>
+            <el-menu-item index="/login">选项2</el-menu-item>
           </el-menu-item-group>
-          <el-menu-item-group title="分组2">
-            <el-menu-item index="1-3">选项3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="1-4">
-            <template slot="title">选项4</template>
-            <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
         <el-submenu index="2">
           <template slot="title"><i class="el-icon-menu"></i>导航二</template>
           <el-menu-item-group>
@@ -68,6 +62,10 @@
 </template>
 
 <style>
+.grad {
+  background: linear-gradient(to bottom, #b0ced3, #6c9bb9);
+}
+
 .el-header {
   background-color: #B3C0D1;
   color: #333;

@@ -1,15 +1,31 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import userMessage from "@/views/userMessage";
+import userHome from "@/views/userHome";
+import userLogin from "@/views/userLogin";
+import App from "@/App"
 
 Vue.use(VueRouter)
 
 export default new VueRouter({
   routes:[
     {
+      path:'/',
+      component:App,
+    },
+    {
       path:'/user',
       name:'user',
       component:userMessage
+    },
+    {
+      path:'/home',
+      name:userHome,
+      component:userHome
+    },
+    {
+      path:'/login',
+      component:userLogin
     }
   ]
 })
