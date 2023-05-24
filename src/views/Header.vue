@@ -1,20 +1,39 @@
 <template>
   <div>
     <el-dropdown>
-      <i class="el-icon-setting" style="margin-right: 15px"></i>
+       <span class="el-dropdown-link">
+    {{this.name}}<i class="el-icon-arrow-down el-icon--right"></i>
+  </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>查看</el-dropdown-item>
         <el-dropdown-item>新增</el-dropdown-item>
-        <el-dropdown-item>删除</el-dropdown-item>
+        <el-dropdown-item @click.native="backUp">退出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <span>王小虎</span>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  name: "Header"
+  name: "Header",
+  data() {
+    return {
+      name: '',
+    }
+  },
+  created() {
+    this.nowUser();
+  },
+  methods: {
+    nowUser() {
+     this.name=this.$route.query.name;
+    },
+    backUp() {
+      this.$router.push('/');
+    }
+  }
 }
 </script>
 

@@ -64,14 +64,20 @@ export default {
     document.querySelector('body').removeAttribute('style')
   },
   methods: {
+    openWarning(msg) {
+      this.$message({
+        message: msg,
+        type: "error"
+      });
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           axios.post("http://localhost:80/login",this.ruleForm).then((res)=>{
             if(res.data.code==202){
-              this.$router.push('/home');
+              this.$router.push({path:'/users/home',query:{name:this.ruleForm.userName}});
             }else{
-              console.log(res.data.message);
+              this.openWarning(res.data.message);
             }
           })
         } else {

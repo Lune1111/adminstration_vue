@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import userMessage from "@/views/userMessage";
 import userHome from "@/views/userHome";
 import userLogin from "@/views/userLogin";
-import App from "@/App";
 import Manage from "@/views/Manage";
 
 Vue.use(VueRouter)
@@ -11,7 +10,7 @@ Vue.use(VueRouter)
 export default new VueRouter({
   routes:[
     {
-      path:'/',
+      path:'/users/',
       component:Manage,
       children:[
         {path:'user', name:'用户信息', component:userMessage},
@@ -19,7 +18,7 @@ export default new VueRouter({
       ]
     },
     {
-      path:'/login',
+      path:'/',
       component:userLogin
     }
   ]

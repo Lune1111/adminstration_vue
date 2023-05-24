@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-menu router class="grad" text-color="black">
-      <el-menu-item index="999" :route="{ path: 'home' }" style="text-align:left !important">
+      <el-menu-item index="999" :route="{ path: '/users/home' }" style="text-align:left !important">
         <i class="el-icon-location"></i>
         <span class="el-menu-item-name" style="margin-left: 0">主页</span>
       </el-menu-item>
       <el-menu-item-group>
-        <el-menu-item index="user"><i class="el-icon-user"></i>用户信息</el-menu-item>
-        <el-menu-item index="login">选项2</el-menu-item>
+        <el-menu-item index="/users/user"><i class="el-icon-user"></i>用户信息</el-menu-item>
+        <el-menu-item index="">选项2</el-menu-item>
       </el-menu-item-group>
       <el-submenu index="2">
         <template slot="title"><i class="el-icon-menu"></i>导航二</template>
