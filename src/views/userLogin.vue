@@ -3,7 +3,7 @@
     <h1 align="center">登录</h1>
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="login">
       <el-form-item label="账号" prop="userName">
-        <el-input type="userName" v-model="ruleForm.userName" autocomplete="off"></el-input>
+        <el-input type="userName" v-model="ruleForm.userName" autocomplete="on"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
