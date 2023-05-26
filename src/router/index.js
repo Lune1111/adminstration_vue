@@ -4,6 +4,7 @@ import userMessage from "@/views/userMessage";
 import userHome from "@/views/userHome";
 import userLogin from "@/views/userLogin";
 import Manage from "@/views/Manage";
+import register from "@/views/register";
 
 Vue.use(VueRouter)
 
@@ -19,7 +20,11 @@ export default new VueRouter({
     },
     {
       path:'/',
-      component:userLogin
+      component:userLogin,
+    },
+    {
+      path:'/register',
+      component:register,
     }
   ]
 })

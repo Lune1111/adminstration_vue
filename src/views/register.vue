@@ -1,16 +1,19 @@
 <template>
   <div class="grade">
-    <h1 align="center">登录</h1>
+    <h1 align="center">用户注册</h1>
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="login">
       <el-form-item label="账号" prop="userName">
         <el-input type="userName" v-model="ruleForm.userName" autocomplete="on"></el-input>
+      </el-form-item>
+      <el-form-item label="用户名" prop="nickName">
+        <el-input type="nickName" v-model="ruleForm.nickName" autocomplete="on"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-        <el-button @click="registerUser">注册</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
+        <el-button @click="resetForm">返回登录</el-button>
       </el-form-item>
     </el-form>
     <!-- 矩形框内容 -->
@@ -21,7 +24,7 @@
 import axios from "axios";
 
 export default {
-  name: "userLogin",
+  name: "register",
   data() {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -73,7 +76,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          axios.post("http://localhost:80/login",this.ruleForm).then((res)=>{
+          axios.post("http://localhost:80/login/register",this.ruleForm).then((res)=>{
             if(res.data.code==202){
               this.$router.push({path:'/users/home',query:{name:this.ruleForm.userName}});
             }else{
@@ -86,11 +89,8 @@ export default {
         }
       });
     },
-    registerUser(){
-      this.$router.push('/register');
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    resetForm() {
+     this.$router.push('/');
     }
   }
 }
