@@ -44,6 +44,7 @@ export default {
       ruleForm: {
         password: '',
         userName:'',
+        nickName:'',
       },
       rules: {
         userName: [

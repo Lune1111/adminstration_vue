@@ -5,6 +5,7 @@ import userHome from "@/views/userHome";
 import userLogin from "@/views/userLogin";
 import Manage from "@/views/Manage";
 import register from "@/views/register";
+import myMessage from "@/views/myMessage";
 
 Vue.use(VueRouter)
 
@@ -16,6 +17,7 @@ export default new VueRouter({
       children:[
         {path:'user', name:'用户信息', component:userMessage},
         {path:'home', name:'首页', component:userHome},
+        {path:'mymessage',name:'个人信息',component:myMessage},
       ]
     },
     {
